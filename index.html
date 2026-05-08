@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EmpTrack — Industrial Employee Registration</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-icon">⬡</span>
+      <span class="brand-name">EmpTrack</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#" class="nav-item active" data-page="dashboard"><span class="nav-icon">▣</span> Dashboard</a></li>
+      <li><a href="#" class="nav-item" data-page="register"><span class="nav-icon">✚</span> Register</a></li>
+      <li><a href="#" class="nav-item" data-page="employees"><span class="nav-icon">☰</span> Employees</a></li>
+      <li><a href="#" class="nav-item" data-page="search"><span class="nav-icon">⌕</span> Search</a></li>
+      <li><a href="#" class="nav-item" data-page="stats"><span class="nav-icon">◈</span> Statistics</a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <span>Industrial ERS v1.0</span>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+
+    <!-- Top Bar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" id="menuToggle">☰</button>
+        <h1 class="page-title" id="pageTitle">Dashboard</h1>
+      </div>
+      <div class="topbar-right">
+        <span class="date-badge" id="dateBadge"></span>
+        <div class="user-avatar">AD</div>
+      </div>
+    </header>
+
+    <!-- Pages -->
+    <div class="page-container">
+
+      <!-- ========= DASHBOARD PAGE ========= -->
+      <section class="page active" id="page-dashboard">
+        <div class="stat-grid">
+          <div class="stat-card accent-blue">
+            <div class="stat-label">Total Employees</div>
+            <div class="stat-value" id="stat-total">0</div>
+            <div class="stat-sub">Registered staff</div>
+          </div>
+          <div class="stat-card accent-green">
+            <div class="stat-label">Avg Salary</div>
+            <div class="stat-value" id="stat-avg">₹0</div>
+            <div class="stat-sub">Monthly CTC</div>
+          </div>
+          <div class="stat-card accent-amber">
+            <div class="stat-label">Departments</div>
+            <div class="stat-value" id="stat-dept">0</div>
+            <div class="stat-sub">Active units</div>
+          </div>
+          <div class="stat-card accent-coral">
+            <div class="stat-label">Latest ID</div>
+            <div class="stat-value" id="stat-latest">—</div>
+            <div class="stat-sub">Last registered</div>
+          </div>
+        </div>
+
+        <div class="dash-grid">
+          <div class="card">
+            <div class="card-header">Recent Registrations</div>
+            <div id="recent-list" class="emp-list"></div>
+          </div>
+          <div class="card">
+            <div class="card-header">Department Breakdown</div>
+            <div id="dept-chart" class="dept-chart"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========= REGISTER PAGE ========= -->
+      <section class="page" id="page-register">
+        <div class="form-card">
+          <div class="form-header">
+            <h2>New Employee Registration</h2>
+            <p>Fill in all fields to register a new employee</p>
+          </div>
+          <form id="registerForm" class="emp-form" onsubmit="return false;">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Full Name *</label>
+                <input type="text" id="f-name" placeholder="e.g. Arjun Sharma" required />
+              </div>
+              <div class="form-group">
+                <label>Employee ID</label>
+                <input type="text" id="f-id" placeholder="Auto-generated" disabled />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Department *</label>
+                <select id="f-dept" required>
+                  <option value="">Select department</option>
+                  <option>Engineering</option>
+                  <option>HR</option>
+                  <option>Finance</option>
+                  <option>Marketing</option>
+                  <option>Operations</option>
+                  <option>Sales</option>
+                  <option>Legal</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Designation *</label>
+                <input type="text" id="f-desig" placeholder="e.g. Software Engineer" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Salary (₹/month) *</label>
+                <input type="number" id="f-salary" placeholder="e.g. 75000" min="0" required />
+              </div>
+              <div class="form-group">
+                <label>Phone *</label>
+                <input type="tel" id="f-phone" placeholder="e.g. 9876543210" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group full-width">
+                <label>Email *</label>
+                <input type="email" id="f-email" placeholder="e.g. employee@company.com" required />
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn-secondary" onclick="clearForm()">Clear</button>
+              <button type="button" class="btn-primary" onclick="registerEmployee()">Register Employee</button>
+            </div>
+          </form>
+          <div id="form-msg" class="form-msg"></div>
+        </div>
+      </section>
+
+      <!-- ========= EMPLOYEES PAGE ========= -->
+      <section class="page" id="page-employees">
+        <div class="toolbar">
+          <div class="dept-filters" id="dept-filters">
+            <button class="filter-btn active" onclick="filterEmployees('All', this)">All</button>
+          </div>
+          <input type="text" class="search-input" placeholder="Filter by name..." id="nameFilter" oninput="applyFilter()" />
+        </div>
+        <div class="table-card">
+          <table class="emp-table" id="emp-table">
+            <thead>
+              <tr>
+                <th>ID</th><th>Name</th><th>Department</th>
+                <th>Designation</th><th>Salary</th><th>Email</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="emp-tbody"></tbody>
+          </table>
+          <div class="no-data" id="no-data" style="display:none">No employees found.</div>
+        </div>
+      </section>
+
+      <!-- ========= SEARCH PAGE ========= -->
+      <section class="page" id="page-search">
+        <div class="search-card">
+          <div class="search-tabs">
+            <button class="stab active" onclick="switchSearch('id', this)">Search by ID</button>
+            <button class="stab" onclick="switchSearch('dept', this)">Search by Department</button>
+            <button class="stab" onclick="switchSearch('name', this)">Search by Name</button>
+          </div>
+          <div class="search-box" id="search-id">
+            <input type="number" placeholder="Enter Employee ID (e.g. 1001)" id="sid-input" />
+            <button class="btn-primary" onclick="searchById()">Search</button>
+          </div>
+          <div class="search-box" id="search-dept" style="display:none">
+            <select id="sdept-input">
+              <option value="">Select Department</option>
+              <option>Engineering</option><option>HR</option><option>Finance</option>
+              <option>Marketing</option><option>Operations</option><option>Sales</option><option>Legal</option>
+            </select>
+            <button class="btn-primary" onclick="searchByDept()">Search</button>
+          </div>
+          <div class="search-box" id="search-name" style="display:none">
+            <input type="text" placeholder="Enter employee name" id="sname-input" />
+            <button class="btn-primary" onclick="searchByName()">Search</button>
+          </div>
+          <div id="search-results" class="search-results"></div>
+        </div>
+      </section>
+
+      <!-- ========= STATS PAGE ========= -->
+      <section class="page" id="page-stats">
+        <div class="stats-grid">
+          <div class="card">
+            <div class="card-header">Salary Summary</div>
+            <div id="salary-stats" class="salary-stats"></div>
+          </div>
+          <div class="card">
+            <div class="card-header">Department Headcount</div>
+            <div id="dept-bars" class="dept-bars"></div>
+          </div>
+          <div class="card full-card">
+            <div class="card-header">Salary Distribution by Department</div>
+            <div id="salary-dept-chart" class="salary-dept-chart"></div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- end page-container -->
+  </main>
+
+  <!-- Edit Modal -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Edit Employee</h3>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group"><label>Name</label><input type="text" id="m-name"/></div>
+          <div class="form-group"><label>Department</label>
+            <select id="m-dept">
+              <option>Engineering</option><option>HR</option><option>Finance</option>
+              <option>Marketing</option><option>Operations</option><option>Sales</option><option>Legal</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Designation</label><input type="text" id="m-desig"/></div>
+          <div class="form-group"><label>Salary (₹)</label><input type="number" id="m-salary"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Email</label><input type="email" id="m-email"/></div>
+          <div class="form-group"><label>Phone</label><input type="tel" id="m-phone"/></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
